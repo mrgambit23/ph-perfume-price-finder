@@ -6,7 +6,6 @@
 <title>Perfume Price Finder PH v4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-<link href="./perfume-price-finder-v4.1_files/css" rel="stylesheet">
 <style>
 :root,[data-theme="light"]{
   --color-bg:#f7f6f2;--color-surface:#f9f8f5;--color-surface-2:#fbfbf9;--color-surface-offset:#f3f0ec;--color-surface-dynamic:#e6e4df;
@@ -619,9 +618,10 @@ function extractRows(rows,cfg,src){
 }
 async function tryGet(url){
   const mirrors=[
-    url,
-    'https://corsproxy.io/?'+encodeURIComponent(url),
-    'https://api.allorigins.win/raw?url='+encodeURIComponent(url)
+    'https://corsproxy.io/?url='+encodeURIComponent(url),   // corrected format (was ?<url>, now ?url=<url>)
+    'https://api.allorigins.win/raw?url='+encodeURIComponent(url),
+    'https://thingproxy.freeboard.io/fetch/'+url,           // extra fallback
+    url                                                     // direct (will CORS-fail in browser; last resort)
   ];
   for(const m of mirrors){
     try{ const r=await fetch(m,{cache:'no-store'}); if(r.ok){ const t=await r.text(); if(t && t.length>20 && !t.toLowerCase().includes('<!doctype') && !t.toLowerCase().includes('<html')) return t; } }catch(e){}
